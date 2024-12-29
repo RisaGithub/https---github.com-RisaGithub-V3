@@ -12,11 +12,10 @@
       "distribution": "internal"
     },
     "production": {
-      "autoIncrement": true
-    },
-    "simulator": {
+      "autoIncrement": true,
       "ios": {
-        "simulator": true
+        "buildType": "archive",
+        "distribution": "internal"
       }
     }
   },
