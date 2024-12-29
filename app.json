@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.risaexpo.snackc93d8619e2a74ae99059ec53459721d1"
     },
     "web": {
       "favicon": "./assets/icon.png"

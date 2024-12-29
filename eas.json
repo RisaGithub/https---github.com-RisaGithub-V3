@@ -11,11 +11,15 @@
     "preview": {
       "distribution": "internal"
     },
-    "production": {
-      "autoIncrement": true,
+    "production": {},
+    "simulator": {
       "ios": {
-        "buildType": "archive",
-        "distribution": "internal"
+        "simulator": true
+      }
+    },
+    "androidapk": {
+      "android": {
+        "buildType": "apk"
       }
     }
   },

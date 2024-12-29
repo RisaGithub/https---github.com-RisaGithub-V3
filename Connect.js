@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Link } from 'expo-router';
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -8,7 +8,7 @@ import cloudsGif from './assets/clouds_no_bg.gif';
 import sv from './assets/ring-resize.svg';
 import { useState, useEffect } from 'react';
 
-const factor = 0.9;
+const factor = 0.8;
 const activeColor = '#ba6bff'
 const notActiveColor = "white"
 const framerate = 1;
@@ -26,7 +26,7 @@ export const Connect = () => {
 
   useEffect(() => { Clicked() }, [])
 
-  let text_top = loading ? -22 : -190
+  let text_top = -100
   // Function to animate the moon
   function ShowMoon() {
     setMoonAnimating(true);
@@ -87,7 +87,9 @@ export const Connect = () => {
   }
 
   function Clicked() {
+
     if (currentColor !== activeColor) {
+      print(console.log(1))
       // Start loading
       setLoading(true);
       setTimeout(() => {
@@ -100,7 +102,8 @@ export const Connect = () => {
         setLoading(false);
         setcurrentColor(activeColor);
       }, 1500);
-    } else if (!moonAnimating && !cloudsAnimating) {
+    } else {
+      print(console.log(2))
       setcurrentColor(notActiveColor);
 
       HideClouds();
@@ -114,7 +117,7 @@ export const Connect = () => {
       colors={['#0f0f34', '#03030f']}
       style={styles.linearGradient}>
       <View style={[styles.centeredView, { paddingVertical: 150 }]}>
-        <View style={[styles.moonContainer, { right: 200, top: moonTop }]}>
+        <View style={[styles.moonContainer, { right: 170, top: moonTop }]}>
           <Image
             source={moonGif}
             style={[
@@ -129,7 +132,7 @@ export const Connect = () => {
         </View>
         <View style={[styles.centeredView]}></View>
 
-        <TouchableOpacity onPress={Clicked} style={styles.centeredView} disabled={loading}>
+        <Pressable onTouchStart={Clicked} style={styles.centeredView} disabled={loading}>
           <View style={[styles.centeredView, {
             borderColor: currentColor,
             shadowColor: currentColor,
@@ -141,7 +144,7 @@ export const Connect = () => {
             position: 'absolute',
             borderWidth: 3,
           }]}>
-            <Text style={[styles.text, { top: text_top }]}>MAMAVPLUSE</Text>
+            <Text style={[styles.text, { top: text_top, position: 'absolute' }]}>MAMAVPLUSE</Text>
             {
               loading &&
               <Image source={sv} style={
@@ -154,7 +157,7 @@ export const Connect = () => {
             }
 
           </View>
-        </TouchableOpacity>
+        </Pressable>
 
         <View style={[{ top: cloudsTop }]}>
           <Image
