@@ -9,7 +9,7 @@ const factor = 0.8;
 const activeColor = '#ba6bff'
 const notActiveColor = "white"
 const connectCircleSize = 350
-const moonShownTop = 60
+const moonShownTop = 45
 const moonHiddenTop = -300
 const cloudsShownBottom = -50
 const cloudsHiddenBottom = 200
@@ -27,6 +27,10 @@ export const Connect = () => {
 
   const currentMoonTop = useRef(new Animated.Value(moonHiddenTop)).current;
   const currentCloudsBottom = useRef(new Animated.Value(cloudsHiddenBottom)).current;
+
+  useEffect(() => {
+    clicked()
+  }, [])
 
   useEffect(() => {
   }, [loading]);
@@ -92,7 +96,13 @@ export const Connect = () => {
         <Text style={[styles.circleText]}>MAMAVPLUSE</Text>
         <ImageBackground opacity={loading ? 1 : 0} source={require("./assets/loading.gif")} style={[styles.loadingRingImage]} >
           <Pressable disabled={loading} onTouchStart={clicked} style={styles.centeredView}>
-            <View style={[styles.connectCircle, { borderColor: loading ? 0 : "white" }]}></View>
+            <View style={[
+              styles.connectCircle,
+              {
+                borderColor: loading ? 0 : connected ? "#ba6bff" : "white",
+                shadowColor: connected ? "#ba6bff" : "white"
+              }
+            ]}></View>
           </Pressable>
         </ImageBackground>
       </View>
