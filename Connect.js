@@ -1,23 +1,69 @@
-import { View, Text, TextInput, StyleSheet, Image, ImageBackground, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Animated, Text, TextInput, StyleSheet, Image, ImageBackground, Pressable, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const factor = 0.8;
 const activeColor = '#ba6bff'
 const notActiveColor = "white"
 const connectCircleSize = 350
 const moonShownTop = 60
-const cloudsShownBottom = -20
+const moonHiddenTop = -300
+const cloudsShownBottom = -50
+const cloudsHiddenBottom = 200
+
+function sleepSync(ms) {
+  const end = Date.now() + ms;
+  while (Date.now() < end) {
+    // Busy wait
+  }
+}
 
 export const Connect = () => {
-  const [currentColor, setcurrentColor] = React.useState(notActiveColor);
-  const [loading, setLoading] = React.useState(true);
+  const [connected, setConnected] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const currentMoonTop = useRef(new Animated.Value(moonHiddenTop)).current;
+  const currentCloudsBottom = useRef(new Animated.Value(cloudsHiddenBottom)).current;
+
+  useEffect(() => {
+  }, [loading]);
 
   function clicked() {
     console.log('Clicked')
+    if (!loading) {
+      if (connected) {
+        HideMoonAndClouds()
+        setConnected(false)
+      } else {
+        setLoading((true));
+        setTimeout(() => {
+          sleepSync(1500);
+          showMoonAndClouds();
+          setLoading(false);
+          setConnected(true);
+        }, 0);
+      }
+    }
+  }
+
+  function showMoonAndClouds() {
+    Animated.timing(currentMoonTop, {
+      toValue: 0, useNativeDriver: true,
+    }).start();
+    Animated.timing(currentCloudsBottom, {
+      toValue: 0, useNativeDriver: true,
+    }).start()
+  }
+  function HideMoonAndClouds() {
+    Animated.timing(currentMoonTop, {
+      toValue: moonHiddenTop, useNativeDriver: true,
+    }).start();
+    Animated.timing(currentCloudsBottom, {
+      toValue: cloudsHiddenBottom, useNativeDriver: true,
+    }).start()
   }
 
   return (
@@ -26,24 +72,26 @@ export const Connect = () => {
       style={styles.linearGradient}>
 
       {/* moon */}
-      <View style={styles.moonShadowContainer}>
+      <Animated.View style={[styles.moonShadowContainer, { transform: [{ translateY: currentMoonTop }] }]}>
         <Image
           source={require('./assets/moon.gif')}
           style={styles.moonImage}
         />
-      </View>
+      </Animated.View>
 
       {/* clouds */}
-      <Image
-        source={require('./assets/clouds.gif')}
-        style={styles.cloudsImage}
-      />
+      <Animated.View style={[styles.cloudsContainer, { transform: [{ translateY: currentCloudsBottom }] }]}>
+        <Image
+          source={require('./assets/clouds.gif')}
+          style={styles.cloudsImage}
+        />
+      </Animated.View>
 
       {/* circle inside loading ring */}
       <View style={styles.centeredView}>
         <Text style={[styles.circleText]}>MAMAVPLUSE</Text>
-        <ImageBackground source={require("./assets/loading.gif")} style={[styles.loadingRingImage, { opacity: loading ? 1 : 0 }]} >
-          <Pressable onPressIn={clicked} onTouchStart={clicked} style={styles.centeredView}>
+        <ImageBackground opacity={loading ? 1 : 0} source={require("./assets/loading.gif")} style={[styles.loadingRingImage]} >
+          <Pressable disabled={loading} onTouchStart={clicked} style={styles.centeredView}>
             <View style={[styles.connectCircle, { borderColor: loading ? 0 : "white" }]}></View>
           </Pressable>
         </ImageBackground>
@@ -79,7 +127,7 @@ const styles = StyleSheet.create({
     shadowColor: '#ba6bff',
     shadowOpacity: 1,
     shadowRadius: 50,
-    elevation: 50,
+    elevation: 70,
   },
   moonImage: {
     opacity: 0.35,
@@ -87,12 +135,14 @@ const styles = StyleSheet.create({
     width: 200 * factor,
     resizeMode: 'fit',
   },
-  cloudsImage: {
+  cloudsContainer: {
     height: 230 * factor,
-    resizeMode: "contain",
     position: 'absolute',
     bottom: cloudsShownBottom,
     alignSelf: "center"
+  },
+  cloudsImage: {
+    resizeMode: "contain",
   },
   connectCircle: {
     borderColor: "white",
